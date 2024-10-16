@@ -1,0 +1,60 @@
+# Google Time Lamp Manual
+
+In this manual, I will desribe how you can connect your Google Calender with your NodeMCU and how te change the colors of a LED strip based on events noted in your calender. 
+
+I will guide you through the entire procces, but if you still get stuck somewhere, don 't be afraid to take a look at the '*Common Errors*' chapter at the end of this manual. This manual is split into different chapters, each of these aim at completing a specific task (such as downloading the Google API, changing the colors depending on your calender, etc.).
+
+Keep in mind that this manual is specifically made for the NodeMCU ESP8266, if you use something else, you may still find some parts of this manual usefull, but the specific code may be incorrect.
+
+
+
+## What do you need?
+
+- NodeMCU (2x)
+- Google Calender API
+- LED strip
+- A laptop or desktop
+- Arduino IDE (Application)
+- Adafruit account (Website)
+- Voice detector (Optional)
+
+
+
+
+How to connect google calendar to influence different lights.
+
+Downloading and setting up Google Calendar API
+
+Step 1
+Step 2
+Etc.
+
+Connecting multiple Arduino’s
+
+Step 1
+Step 2
+Etc.
+
+Changing the colors of the light depending on your calender.
+
+Step 1
+Step 2
+Etc.
+
+(Optional) Making new events using your voice
+
+Step 1
+Step 2
+Etc.
+
+
+
+
+Common Errors
+
+
+Explaining the different kinds of errors/
+
+
+
+
