@@ -176,10 +176,55 @@ Lastly, we need to initialize the LEDstrip. Add the following code in the void s
 
 #### Step 18 Connecting our LED strip to NodeMCU
 
-Our LEDstrip had 3 connectors with the following names "+5V, GND and DO". 
-- Connect the +5V cable of the LEDstrip to a 3,3V pin on the NodeMCU
-- Connect the GND cable of the LEDstrip to a GND pin on the NodeMCU
-- Connect the DO cable of the LEDstrip to a D(Number) pin on the NodeMCU. I chose number 1.
+Now comes the tedious part. Each color has a ID from 1 to 11 in the google calender app. In the 'HandleMessage' function we will need to add a switch function from 1 to 11 and change the colors so they match with the colors of google. 
+
+```
+switch(data->toInt()){
+case 1:
+  //code goes here
+break;
+```
+
+When adding multiple cases for eacht color ID it will look something like this. 
+
+```
+case 2:
+  //code goes here
+break;
+case 3:
+  //code goes here
+break;
+case 4:
+  //code goes here
+break;
+```
+
+The case number corresponds to the color id, so repeat this up until we reach case 11.
+
+Now we add code to each case. Here we will change the color of our LEDstrip to match the colorID. Add the following code in eacht case:
+
+```
+  for(int i=0; i<15; i++) {
+    pixels.setPixelColor(i, pixels.Color(100, 100, 100));
+    pixels.show();
+  }
+```
+
+Now we need to change the RGB to match the colors of the google calender events. Here are the color ID's with their corresponding RGB values:
+
+- 1: 121, 134, 203
+- 2: 51, 182, 121
+- 3: 142, 36, 170
+- 4: 230, 124, 115
+- 5: 246, 191, 38
+- 6: 244, 81, 30
+- 7: 3, 155, 229
+- 8: 97, 97, 97
+- 9: 63, 81, 181
+- 10: 11, 128, 67
+- 11: 213, 0, 0
+
+
 
 
 Step 1
