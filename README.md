@@ -10,7 +10,7 @@ Keep in mind that this manual is specifically made for the NodeMCU ESP8266, if y
 
 ## What do you need?
 
-- NodeMCU (1x)
+- NodeMCU ESP8266
 - LED strip
 - A laptop or desktop
 - Arduino IDE (Application)
