@@ -74,12 +74,45 @@ When clicking on the 'Account' field, you will automatically be redirected to a 
 
 
 #### Step 9 Configuring details of our Calender
-We can now press the 'Continue' button and choose a specific calender connected to our google account and add other details how much time before the event the trigger should activate. I will personally be setting it to 10 minutes in advance. We can also add an additional search term. When filling in a name here, the trigger will only activate if the event in our calender has that specific name in it. I will be leaving this field empty. After setting this up it should look like this: 
+We can now press the 'Continue' button and choose a specific calender connected to our google account and add other details how much time before the event the trigger should activate. I will personally be setting it to 10 minutes in advance. We can also add an additional search term. When filling in a name here, the trigger will only activate if the event in our calender has that specific name in it. We will leave this empty for now.
 
 ![Screenshot 2024-10-16 151254](https://github.com/user-attachments/assets/b71fca1d-5e02-4dff-a8cb-2523fc095cd8)
 
+#### (Step 9.5 Creating paths)
+If you want specific colors for specific events, we will need to create extra paths and filters. Otherwise it will always change to the same color and doesn't care about what type of event is in your calender.
+
+- Creating paths. Click on the '+' icon beneath the trigger event and select the 'paths' option. This will create 2 different paths were we can set conditions for which path should be followed.
+
+![Screenshot 2024-10-17 114516](https://github.com/user-attachments/assets/eb11eeb4-7da3-4eb3-81d7-f78654200f51)
+
+- If you want more then 2 paths, clicking on the '+' icon beneath the 'paths' block will create an additional path. I will personally use 3 paths.
+- We will now set conditions for each path. Sadly, as far as I am aware, we cannot directly send the color data of an event to our feed. We will therefore check for specific words in description for events. Click on on of the the divirging paths with 'condition' in them. You will then see this:
+
+![image](https://github.com/user-attachments/assets/fffc5830-f3fb-4aa9-900b-f884550569f3)
+
+We will fill it in like this: "Only continue if, description, (text) contains, Work". This way this path will only trigger when the starting event has a desription which contains the word "Work". 
+
+![image](https://github.com/user-attachments/assets/8efb8da2-cda1-42f9-93c4-1fa616d75194)
+
+- In the second path the condition will be exactly the same, but with the word "Meeting". The third condition will be a little different. This path will be used when the description DOESN'T have the word "Work" and "Meeting". This way this path will continue whenever an event isn't labeled.
+
 #### Step 10 Sending data to our Adafruit IO feed
-We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website.
+We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website. WE will need to do the following things:
+1. Under 'Choose App', select Adafruit IO
+2. Under Choose Action Event select 'Create Feed Data'
+3. Under 'Choose account' log in using your Adafruit account. This is the account we made in step 1. It will ask for your username and a key. You can find this information on the adafruit website when pressing the yellow key button in the top right.
+
+![image](https://github.com/user-attachments/assets/19ad386c-4634-4035-a26b-7741bbbe1edf)
+
+#### Step 11 Customizing our feed data
+We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website. WE will need to do the following things:
+1. Under 'Feed Key', fill in the name of the feed we created in step 3
+2. Under 'Value' fill in value 1
+3. (Optional) If you created multiple paths in step 9.5, you will need to give each path a different value. I will give the "Work" path a value of 1, "Meeting" a 2 and the last one a 3.
+
+#### Step 12 Testing
+We are now almost ready to start automating. Click on the test button on one of the 'Action' blocks. The value will then show up in your Adafruit feed with a value of 1 (, 2 or 3 depending on which path you tested). Before we can turn this zap on we need to test every block. So click on every block en click on the test button! Afterwards, don't forget to turn publis the zap to turn it on!
+
 
 Connecting multiple Arduino’s
 
