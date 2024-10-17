@@ -11,13 +11,11 @@ Keep in mind that this manual is specifically made for the NodeMCU ESP8266, if y
 ## What do you need?
 
 - NodeMCU (1x)
-- Google Calender API
 - LED strip
 - A laptop or desktop
 - Arduino IDE (Application)
 - Adafruit account (Website)
-- Voice detector (Optional)
-
+- Zapier Account
 
 
 ## How to connect Google Calendar to a NodeMCU to influence different lights.
@@ -135,7 +133,7 @@ Now we need to send our feed information to our NodeMCU. Therefore we have to go
 Now comes the fun part. We will now start with changing the colors of our LEDstrip depending on the color of our event. 
 
 #### Step 16 Downloading Libraries.
-For our LEDstrip to work, we will need a new library. In the ArduinoIDE application, go to tools and 'manage libraries'. Here you can search for the Adafruit_NeoPixel librarie and download it wit all it's dependencies. Afterwards go to the top of your file and include the following code:
+For our LEDstrip to work, we will need a new library. In the ArduinoIDE application, go to tools and 'manage libraries'. Here you can search for the Adafruit_NeoPixel library and download it wit all it's dependencies. Afterwards go to the top of your file and include the following code:
 
 ```
 #include <Adafruit_NeoPixel.h>
@@ -153,7 +151,7 @@ Our LEDstrip had 3 connectors with the following names "+5V, GND and DO".
 
 Now that the LEDstrip is connected, we will also need to specify some things in our ArduinoIDE application to let the NodeMCU know a LED strip is connected.
 
-Add the following code:
+Add the following code in the readfeedtutorial.ino file below the libraries:
 
 ```
 // Which pin on the Arduino is connected to the NeoPixels?
@@ -172,11 +170,12 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 The PIN defines on what pin the LED strip is connected to. I connected it to D1, make sure to change the number if you connected it to another PIN. The NUMPIXELS defines how many LED's are on our strip. Change it to the amount of LED's you have on your LEDstrip.
 
 Lastly, we need to initialize the LEDstrip. Add the following code in the void setup function:
+
 ```  pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)```
 
-#### Step 18 Connecting our LED strip to NodeMCU
+#### Step 18 (Final) Reading our feed data and changing colors
 
-Now comes the tedious part. Each color has a ID from 1 to 11 in the google calender app. In the 'HandleMessage' function we will need to add a switch function from 1 to 11 and change the colors so they match with the colors of google. 
+Now comes the tedious part. Each color has a ID from 1 to 11 in the google calender app that gets send to our feed. In the 'HandleMessage' function we will need to add a switch function from 1 to 11 and change the colors so they match with the colors of google. 
 
 ```
 switch(data->toInt()){
@@ -185,7 +184,7 @@ case 1:
 break;
 ```
 
-When adding multiple cases for eacht color ID it will look something like this. 
+When adding multiple cases for each color ID it will look something like this. 
 
 ```
 case 2:
@@ -201,7 +200,7 @@ break;
 
 The case number corresponds to the color id, so repeat this up until we reach case 11.
 
-Now we add code to each case. Here we will change the color of our LEDstrip to match the colorID. Add the following code in eacht case:
+Now we add the code to change our LEDstrip color to each case. Add the following code in eacht case:
 
 ```
   for(int i=0; i<15; i++) {
@@ -210,7 +209,7 @@ Now we add code to each case. Here we will change the color of our LEDstrip to m
   }
 ```
 
-Now we need to change the RGB to match the colors of the google calender events. Here are the color ID's with their corresponding RGB values:
+Lastly, we need to change the RGB to match the colors of the google calender events. Here are the color ID's with their corresponding RGB values:
 
 - 1: 121, 134, 203
 - 2: 51, 182, 121
@@ -224,44 +223,56 @@ Now we need to change the RGB to match the colors of the google calender events.
 - 10: 11, 128, 67
 - 11: 213, 0, 0
 
+After filling in all the correct RGB values, everything should work! Now the color of the LED strip lights will change to match the color of the event in your google calender. 
+
+Hopefully this manual was helpfull, and if something isn't working please take a look at the 'Common Errors' below.
 
 
 
-Step 1
-Step 2
-Etc.
+### Common Errors
+
+####I can't see my serial monitor?
+
+If you can't find the serial monitor. It could be that you haven't opened it yet. To do so, go to 'Tools' and click on 'Serial Monitor'
+
+![image](https://github.com/user-attachments/assets/06b81f0d-8feb-4078-a89c-63ac016254ec)
+
+#### Nothing is showing in my serial monitor, or weird symbols are showing in my serial monitor?
+
+Sometimes, the serial monitor and the actual code can be desynced. The file we used as setup already has code in place that should prevent it from happening. But when uploading the code, you still don't see the text confirming that it's attempting to connect, you can add an additional 
+``` Delay(10000) ``` in the setup function. This will delay everything by an additional 10 seconds so the serial monitor has time to catch up. It should look something like this:
+
+![image](https://github.com/user-attachments/assets/49ac124a-9def-48cc-9727-7fa5cbef217d)
+
+Another reason for the serial monitor not working properly is that the Baud isn't matched with what we're calling in the code. You will then see something like this pop up in the serial monitor:
+
+![image](https://github.com/user-attachments/assets/419e646c-e391-4fe7-a040-948a1b40e78a)
+
+In the tutorial file we downloaded, the code is calling for a baud number equal to 115200, so we should change this in our serial monitor aswell. In the top right of our serial monitor we can change this number.
+
+![image](https://github.com/user-attachments/assets/cf44f2fa-71ac-443f-b3fd-f93c23560c3d)
+
+#### My LED strip isn't working
+
+The first thing to check is if all the PINS are correctly installed. Again, the pins should be connected like this:
+
+- Connect the +5V cable of the LEDstrip to a 3,3V pin on the NodeMCU
+- Connect the GND cable of the LEDstrip to a GND pin on the NodeMCU
+- Connect the DO cable of the LEDstrip to a D(Number) pin on the NodeMCU. I chose number 1.
 
 
+Another reason could be that you haven't updated the max number of pixels on your LED strip when changing the colors. In each case of our 'switch' function we also need to state the number of lights we want to change, in my case it's 15, but it could be different with your LED strip. 
 
+```
+  for(int i=0; i<15; i++) {
+    pixels.setPixelColor(i, pixels.Color(51, 182, 121));
+    pixels.show();
+  }
+```
 
-Common Errors
+Here you can see the 'i<15' in the 'for' function. You will need to change this number in all your cases to the amount your LED strip has.
 
-#### (Step 9.5 Creating paths)
-If you want specific colors for specific events, we will need to create extra paths and filters. Otherwise it will always change to the same color and doesn't care about what type of event is in your calender.
+#### My Zapier isn't updating my feed with every event?
 
-- Creating paths. Click on the '+' icon beneath the trigger event and select the 'paths' option. This will create 2 different paths were we can set conditions for which path should be followed.
+Sadly, Zapier is a bit inconsistant with when it detects an event in Google Maps. You could always make a second Zap that also checks for the event at a different time interval to reduce the amount of times it fails, but sadly it's still not reliable. For betters result it would be possible to, either make a server yourself that checks for google calender events, or use a deffirent website that sends feed data. But that is another tutorial for itsel!
 
-![Screenshot 2024-10-17 114516](https://github.com/user-attachments/assets/eb11eeb4-7da3-4eb3-81d7-f78654200f51)
-
-- If you want more then 2 paths, clicking on the '+' icon beneath the 'paths' block will create an additional path. I will personally use 3 paths.
-- We will now set conditions for each path. Sadly, as far as I am aware, we cannot directly send the color data of an event to our feed. We will therefore check for specific words in description for events. Click on on of the the divirging paths with 'condition' in them. You will then see this:
-
-![image](https://github.com/user-attachments/assets/fffc5830-f3fb-4aa9-900b-f884550569f3)
-
-We will fill it in like this: "Only continue if, description, (text) contains, Work". This way this path will only trigger when the starting event has a desription which contains the word "Work". 
-
-![image](https://github.com/user-attachments/assets/8efb8da2-cda1-42f9-93c4-1fa616d75194)
-
-- In the second path the condition will be exactly the same, but with the word "Meeting". The third condition will be a little different. This path will be used when the description DOESN'T have the word "Work" and "Meeting". This way this path will continue whenever an event isn't labeled.
-
-
-#### Add an error for when the startup isn't working, add a delay.
-
-#### Add for if the serial monitor isn't opening.
-
-#### Add a notification that Zapier is a bit inconsistant.
-
-#### Add a notification for incorrectly installed pins.
-
-
-Explaining the different kinds of errors/
