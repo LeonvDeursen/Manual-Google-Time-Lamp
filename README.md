@@ -10,7 +10,7 @@ Keep in mind that this manual is specifically made for the NodeMCU ESP8266, if y
 
 ## What do you need?
 
-- NodeMCU (2x)
+- NodeMCU (1x)
 - Google Calender API
 - LED strip
 - A laptop or desktop
@@ -78,6 +78,119 @@ We can now press the 'Continue' button and choose a specific calender connected 
 
 ![Screenshot 2024-10-16 151254](https://github.com/user-attachments/assets/b71fca1d-5e02-4dff-a8cb-2523fc095cd8)
 
+#### Step 10 Sending data to our Adafruit IO feed
+We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website. WE will need to do the following things:
+1. Under 'Choose App', select Adafruit IO
+2. Under Choose Action Event select 'Create Feed Data'
+3. Under 'Choose account' log in using your Adafruit account. This is the account we made in step 1. It will ask for your username and a key. You can find this information on the adafruit website when pressing the yellow key button in the top right.
+
+![image](https://github.com/user-attachments/assets/19ad386c-4634-4035-a26b-7741bbbe1edf)
+
+#### Step 11 Customizing our feed data
+We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website. WE will need to do the following things:
+1. Under 'Feed Key', fill in the name of the feed we created in step 3
+2. on the right in the 'Value' field, is a '+' button. Click on this and select the color ID option. If you can't find this option, have a look at the 'Common Errors' at the bottom of this manual.
+
+#### Step 12 Testing
+We are now almost ready to start automating. Click on the test button on the 'Action' blocks. The value will then show up in your Adafruit feed with a value of 1 to 12 depending on the color of the event. Now also run a test on the 'trigger' block, and we'll be ready to publish.
+
+
+### Connecting our NodeMCU
+
+#### Step 13 Setting up our Arduino IDE File
+We are ready to start automating. We now have a program that reads our calender and sends the color data to a feed we can read with our NodeMCU.
+
+1. Start with connecting your NodeMCU to your laptop or desktop.
+2. Download the following code at GitHub. https://github.com/SummerDanoe/ReadGoogleCalFeed.
+3. This code is a good setup for reading our feed data. After downloading it, open the 'readfeedtutorial.ino' and make sure all ports are correct.
+
+#### Step 14 Filling in netwerk and account information
+We now have a file where we need to fill in some information before it wil work. We will need to fill in the following information.
+
+- On the top of the screen, you will see a second tab with the name 'config.h'. Click on this to see a different page. Here we need to fill in Adafruit account information just like we did in step 10.
+
+![image](https://github.com/user-attachments/assets/5090a54e-bb16-42db-abf7-1c059d03b34c)
+
+- We also need to connect our Ardiuno to a wifi network. Fill in the name of your wifi network and the password on line 34 and 35.
+
+![image](https://github.com/user-attachments/assets/62ffa4e6-01ea-42ba-80ef-91282ccb829f)
+
+#### Step 15 Connecting our NodeMCU to our feed
+Now we need to send our feed information to our NodeMCU. Therefore we have to go back to our original page with the name 'readfeedtutorial.ino' instead of the 'config.h' page. Fill in the following:
+
+- On line 8 we need to again fill in the name of our Adafruit account.
+
+![image](https://github.com/user-attachments/assets/84b57ae8-2690-4238-98e7-8b4403589ea8)
+
+- On line 11, it asks for the name of your feed, in my case it was "TimeLamp".
+
+![image](https://github.com/user-attachments/assets/8b5c92ce-8bb9-4a51-be3a-128af4a64387)
+
+- Lastly, at the bottem is a function called 'HandleMessage'. A lot of the information is here is not needed. We can simply replace all of the code in this funtion with a simple serialprint to test if it can read our feed. 
+
+```Serial.println(data->toInt());```
+
+### Changing the colors of the light depending on your calender.
+
+Now comes the fun part. We will now start with changing the colors of our LEDstrip depending on the color of our event. 
+
+#### Step 16 Downloading Libraries.
+For our LEDstrip to work, we will need a new library. In the ArduinoIDE application, go to tools and 'manage libraries'. Here you can search for the Adafruit_NeoPixel librarie and download it wit all it's dependencies. Afterwards go to the top of your file and include the following code:
+
+```
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+ #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+```
+
+#### Step 17 Connecting our LED strip to NodeMCU
+
+Our LEDstrip had 3 connectors with the following names "+5V, GND and DO". 
+- Connect the +5V cable of the LEDstrip to a 3,3V pin on the NodeMCU
+- Connect the GND cable of the LEDstrip to a GND pin on the NodeMCU
+- Connect the DO cable of the LEDstrip to a D(Number) pin on the NodeMCU. I chose number 1.
+
+Now that the LEDstrip is connected, we will also need to specify some things in our ArduinoIDE application to let the NodeMCU know a LED strip is connected.
+
+Add the following code:
+
+```
+// Which pin on the Arduino is connected to the NeoPixels?
+#define PIN        D1 // On Trinket or Gemma, suggest changing this to 1
+
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS 15 // Popular NeoPixel ring size
+
+// When setting up the NeoPixel library, we tell it how many pixels,
+// and which pin to use to send signals. Note that for older NeoPixel
+// strips you might need to change the third parameter -- see the
+// strandtest example for more information on possible values.
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+```
+
+The PIN defines on what pin the LED strip is connected to. I connected it to D1, make sure to change the number if you connected it to another PIN. The NUMPIXELS defines how many LED's are on our strip. Change it to the amount of LED's you have on your LEDstrip.
+
+Lastly, we need to initialize the LEDstrip. Add the following code in the void setup function:
+```  pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)```
+
+#### Step 18 Connecting our LED strip to NodeMCU
+
+Our LEDstrip had 3 connectors with the following names "+5V, GND and DO". 
+- Connect the +5V cable of the LEDstrip to a 3,3V pin on the NodeMCU
+- Connect the GND cable of the LEDstrip to a GND pin on the NodeMCU
+- Connect the DO cable of the LEDstrip to a D(Number) pin on the NodeMCU. I chose number 1.
+
+
+Step 1
+Step 2
+Etc.
+
+
+
+
+Common Errors
+
 #### (Step 9.5 Creating paths)
 If you want specific colors for specific events, we will need to create extra paths and filters. Otherwise it will always change to the same color and doesn't care about what type of event is in your calender.
 
@@ -96,46 +209,14 @@ We will fill it in like this: "Only continue if, description, (text) contains, W
 
 - In the second path the condition will be exactly the same, but with the word "Meeting". The third condition will be a little different. This path will be used when the description DOESN'T have the word "Work" and "Meeting". This way this path will continue whenever an event isn't labeled.
 
-#### Step 10 Sending data to our Adafruit IO feed
-We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website. WE will need to do the following things:
-1. Under 'Choose App', select Adafruit IO
-2. Under Choose Action Event select 'Create Feed Data'
-3. Under 'Choose account' log in using your Adafruit account. This is the account we made in step 1. It will ask for your username and a key. You can find this information on the adafruit website when pressing the yellow key button in the top right.
 
-![image](https://github.com/user-attachments/assets/19ad386c-4634-4035-a26b-7741bbbe1edf)
+#### Add an error for when the startup isn't working, add a delay.
 
-#### Step 11 Customizing our feed data
-We also have an 'Action' block. Here we need to select select our feed we created on the Adafruit website. WE will need to do the following things:
-1. Under 'Feed Key', fill in the name of the feed we created in step 3
-2. Under 'Value' fill in value 1
-3. (Optional) If you created multiple paths in step 9.5, you will need to give each path a different value. I will give the "Work" path a value of 1, "Meeting" a 2 and the last one a 3.
+#### Add for if the serial monitor isn't opening.
 
-#### Step 12 Testing
-We are now almost ready to start automating. Click on the test button on one of the 'Action' blocks. The value will then show up in your Adafruit feed with a value of 1 (, 2 or 3 depending on which path you tested). Before we can turn this zap on we need to test every block. So click on every block en click on the test button! Afterwards, don't forget to turn publis the zap to turn it on!
+#### Add a notification that Zapier is a bit inconsistant.
 
-
-Connecting multiple Arduino’s
-
-Step 1
-Step 2
-Etc.
-
-Changing the colors of the light depending on your calender.
-
-Step 1
-Step 2
-Etc.
-
-(Optional) Making new events using your voice
-
-Step 1
-Step 2
-Etc.
-
-
-
-
-Common Errors
+#### Add a notification for incorrectly installed pins.
 
 
 Explaining the different kinds of errors/
